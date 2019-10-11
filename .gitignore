@@ -1,2 +1,3 @@
 **/target/
-/src/main/resources/sensitive.properties
+src/main/resources/sensitive.properties
+bin/main/resources/sensitive.properties
