@@ -1,8 +1,13 @@
 package main.java;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
+
 
 public class BeautifyTvShow {
+		
 	public static void main(String[] args) throws FileNotFoundException {
 		Thread[] DirThread = new Thread[args.length];
 		for (int i = 0; i < args.length; i++) {
@@ -23,6 +28,16 @@ public class BeautifyTvShow {
 				e.printStackTrace();
 			}
 		}
-		System.out.printf("All threads joined succesfully!\n");		
+		System.out.printf("All threads joined succesfully!\n");
+		Properties props = new Properties();
+		Properties sensitive = new Properties();
+		try {
+			props.load(new FileInputStream("./bin/main/resources/application.properties"));
+			sensitive.load(new FileInputStream("./bin/main/resources/sensitive.properties"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//System.out.printf("api url: %s\napi key: %s\n", props.getProperty("api.searchtv.url"), sensitive.getProperty("api.key"));
 	}
 }
