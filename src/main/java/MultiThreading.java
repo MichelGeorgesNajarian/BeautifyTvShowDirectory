@@ -2,6 +2,7 @@ package main.java;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -30,7 +31,7 @@ public class MultiThreading implements Runnable {
 		for (int i = 0; i < this.contents.length; i++) {
 			if (this.contents[i].isFile()) {
 				System.out.printf("File is: %s\n", this.contents[i].getName());
-				fileHandler(this.contents[i].getName());
+				fileHandler(this.contents[i]);
 			} else if (this.contents[i].isDirectory()) {
 				System.out.printf("Directory is: %s\n", this.contents[i].getName());
 				recursiveWalk(this.directoryName + "/" + this.contents[i].getName());
@@ -39,8 +40,8 @@ public class MultiThreading implements Runnable {
 
 	}
 	
-	public void fileHandler(String fileName) {
-		String filteredFileName = fileName.replaceAll("(\\s)*[\\[|\\(](\\s)*.*?(\\s)*[\\]\\)](\\s)*", "");
+	public void fileHandler(File fileName) {
+		String filteredFileName = fileName.getName().replaceAll("(\\s)*[\\[|\\(](\\s)*.*?(\\s)*[\\]\\)](\\s)*", "");
 		String getSeasonEpisode = "(.+?)(?=([\\.|\\s|\\-]+[s|S]\\d+))|([s|S]\\d+)|([e|E]\\d+)|(\\.(?:.(?!\\.))+$)";
 		Pattern seasonEpisode = Pattern.compile(getSeasonEpisode);
 		Matcher m = seasonEpisode.matcher(filteredFileName);
@@ -54,21 +55,33 @@ public class MultiThreading implements Runnable {
 		int episodeNum = Integer.parseInt(allMatches.get(2).replaceFirst("e|E", ""));
 		String extension = allMatches.get(3);
 		
+		TvShow tv = null;
+		try {
+			tv = new TvShow(TvName);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		tv = matchTvShowObject(tv);
+		tv.setFullPath(fileName.getAbsolutePath());
+		
+		
 		System.out.printf("Tv Show: %s Season %02d Episode %02d with extension: %s\n", TvName, seasonNum, episodeNum, extension);
 	}
 	
 	public void recursiveWalk(String rootdir ) {
 		File root = new File(rootdir);
-		TvShow show = new TvShow(rootdir.split("/")[1]);
+		//TvShow show = new TvShow(rootdir.split("/")[1]);
 	}
 	
-	public boolean isExisting(TvShow tv) {
+	public TvShow matchTvShowObject(TvShow tv) {
 		for (int i = 0; i < this.allTvShows.size(); i++) {
 			if(tv.getName().equals(this.allTvShows.get(i).getName())) {
-				return true;
+				return this.allTvShows.get(i);
 			}
 		}
-		return false;
+		this.allTvShows.add(tv);
+		return tv;
 	}
 
 }
