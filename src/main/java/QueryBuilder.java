@@ -25,5 +25,9 @@ public class QueryBuilder {
 				? formatted.deleteCharAt(formatted.length()-1).toString() 
 				: formatted.toString();
 	}
+	
+	public static String buildURL(String baseurl, String query_params) {
+		return baseurl + "?" + query_params;
+	}
 
 }

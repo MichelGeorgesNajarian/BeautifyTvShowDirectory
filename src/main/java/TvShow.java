@@ -1,7 +1,6 @@
 package main.java;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.json.JSONObject;
+
 public class TvShow {
 	private String name;
 	private int numSeasons;
@@ -23,7 +24,7 @@ public class TvShow {
 	private String fullPath;
 	
 	public TvShow(String name) throws IOException {
-		sun.util.logging.PlatformLogger.getLogger("sun.net.www.protocol.http.HttpURLConnection").setLevel(sun.util.logging.PlatformLogger.Level.ALL);
+		//sun.util.logging.PlatformLogger.getLogger("sun.net.www.protocol.http.HttpURLConnection").setLevel(sun.util.logging.PlatformLogger.Level.ALL);
 		props = new Properties();
 		sensitive = new Properties();
 		try {
@@ -37,27 +38,47 @@ public class TvShow {
 		this.name = name;
 		URL getTvInfoUrl = null;
 		try {
+			//putting the request params in a hashmap
+			Map<String, String> params = new HashMap<>();
+			params.put("api_key", this.sensitive.getProperty("api.key"));
+			params.put("query", this.name);
 			//getting url to make get request and find tv show
-			getTvInfoUrl = new URL(props.getProperty("api.searchtv.url"));
+			getTvInfoUrl = new URL(
+					QueryBuilder.buildURL(
+							props.getProperty("api.searchtv.url"), 
+							QueryBuilder.formatParams(params)
+					)
+			);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		HttpURLConnection con = (HttpURLConnection) getTvInfoUrl.openConnection();
+		//GET request
+		
 		con.setRequestMethod("GET");
-		
-		//putting the request params in a hashmap
-		Map<String, String> params = new HashMap<>();
-		params.put("api_key", this.sensitive.getProperty("api.key"));
-		params.put("query", this.name);
-		con.setDoOutput(true);
-		DataOutputStream out = new DataOutputStream(con.getOutputStream());
-		out.writeBytes(QueryBuilder.formatParams(params));
-		out.flush();
-		out.close();
-		
+		//request header JSON
+		con.setRequestProperty("Content-Type", "application/json");
+		//timeout after 10 seconds for both connect and read
+		con.setConnectTimeout(10000);
+		con.setReadTimeout(10000);
+		StringBuilder content;
+
+        try (BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()))) {
+        	//JSONObject results
+        	String line;
+        	content = new StringBuilder();
+        	while ((line = in.readLine()) != null) {
+        		content.append(line);
+                content.append(System.lineSeparator());
+            }
+        } finally {
+            con.disconnect();
+        }
+        System.out.println(content.toString());
 		int responseCode = con.getResponseCode();
-		System.out.printf("Response of '%s' request is %d\nError is: %s", con.getRequestMethod(), responseCode, con.getErrorStream().toString());
+		//System.out.printf("Response of '%s' request is %d\n", con.getRequestMethod(), responseCode);
         
 		//TODO get request to the tv show id, num of seasons and name
 		//setName(name result from get request);
