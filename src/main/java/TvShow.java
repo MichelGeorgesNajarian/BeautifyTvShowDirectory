@@ -84,7 +84,7 @@ public class TvShow {
 		//setName(name result from get request);
 		//setNumSeason(number of seasons);
 		//setTvId(tv id value from response of get request);
-		
+
 	}
 	
 	public String getName() {
@@ -94,7 +94,7 @@ public class TvShow {
 	public void setName(String newName) {
 		this.name = newName;
 	}
-	
+
 	public int getNumSeasons() {
 		return this.numSeasons;
 	}
@@ -125,6 +125,4 @@ public class TvShow {
 		newSeason.setTvId(this.tv_id);
 		newSeason.setFullPath(this.fullPath);
 	}
-	
-	
 }
