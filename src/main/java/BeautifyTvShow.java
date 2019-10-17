@@ -10,7 +10,9 @@ public class BeautifyTvShow {
 		
 	public static void main(String[] args) throws FileNotFoundException {
 		Thread[] DirThread = new Thread[args.length];
+		System.out.printf("\n\n\n\n\n\n%d\n\n\n\n\n\n\n\n\n", args.length);
 		for (int i = 0; i < args.length; i++) {
+			System.out.printf("argument %d: %s\n", i, args[i]);
 			try {
 				DirThread[i] = new Thread(new MultiThreading(args[i]));
 				DirThread[i].start();
