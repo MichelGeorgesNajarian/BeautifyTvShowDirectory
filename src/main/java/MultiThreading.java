@@ -65,12 +65,12 @@ public class MultiThreading implements Runnable {
 		tv = matchTvShowObject(tv);
 		tv.setFullPath(fileName.getAbsolutePath());
 		
-		
 		System.out.printf("Tv Show: %s Season %02d Episode %02d with extension: %s\n", TvName, seasonNum, episodeNum, extension);
 	}
 	
 	public void recursiveWalk(String rootdir ) {
 		File root = new File(rootdir);
+
 		//TvShow show = new TvShow(rootdir.split("/")[1]);
 	}
 	
