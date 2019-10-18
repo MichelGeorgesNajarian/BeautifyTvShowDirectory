@@ -28,8 +28,8 @@ public class TvShow {
 		props = new Properties();
 		sensitive = new Properties();
 		try {
-			props.load(new FileInputStream("./bin/main/resources/application.properties"));
-			sensitive.load(new FileInputStream("./bin/main/resources/sensitive.properties"));
+			props.load(BeautifyTvShow.class.getClassLoader().getResourceAsStream("application.properties"));
+			sensitive.load(BeautifyTvShow.class.getClassLoader().getResourceAsStream("sensitive.properties"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

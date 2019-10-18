@@ -50,10 +50,19 @@ public class MultiThreading implements Runnable {
 			System.out.printf("match %s\n", m.group());
 			allMatches.add(m.group());
 		}
-		String TvName = allMatches.get(0).replaceAll("[\\.|_|\\-]", " ");
-		int seasonNum = Integer.parseInt(allMatches.get(1).replaceFirst("s|S", ""));
-		int episodeNum = Integer.parseInt(allMatches.get(2).replaceFirst("e|E", ""));
-		String extension = allMatches.get(3);
+		String TvName = null;
+		int seasonNum = 0;
+		int episodeNum = 0;
+		String extension = null;
+		try {
+			TvName = allMatches.get(0).replaceAll("[\\.|_|\\-]", " ");
+			seasonNum = Integer.parseInt(allMatches.get(1).replaceFirst("s|S", ""));
+			episodeNum = Integer.parseInt(allMatches.get(2).replaceFirst("e|E", ""));
+			extension = allMatches.get(3);
+		} catch(IndexOutOfBoundsException e) {
+			System.out.printf("!!Error!!\n%s is not in a valid TV show naming format.\nUnable to get Tv Show name, Season number or the Episode number Format the file '%s' at this path: '%s' correctly and try again.\n", fileName.getName(), fileName.getName(), fileName.getAbsolutePath());
+			return;
+		}
 		
 		TvShow tv = null;
 		try {
