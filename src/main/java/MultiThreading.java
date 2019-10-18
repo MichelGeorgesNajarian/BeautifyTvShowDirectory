@@ -30,10 +30,10 @@ public class MultiThreading implements Runnable {
 		System.out.printf("using directory: %s\n", this.directoryName);
 		for (int i = 0; i < this.contents.length; i++) {
 			if (this.contents[i].isFile()) {
-				System.out.printf("File is: %s\n", this.contents[i].getName());
+				//System.out.printf("File is: %s\n", this.contents[i].getName());
 				fileHandler(this.contents[i]);
 			} else if (this.contents[i].isDirectory()) {
-				System.out.printf("Directory is: %s\n", this.contents[i].getName());
+				//System.out.printf("Directory is: %s\n", this.contents[i].getName());
 				recursiveWalk(this.directoryName + "/" + this.contents[i].getName());
 			}
 		}
@@ -47,7 +47,7 @@ public class MultiThreading implements Runnable {
 		Matcher m = seasonEpisode.matcher(filteredFileName);
 		List<String> allMatches = new ArrayList<String>();
 		while(m.find()) {
-			System.out.printf("match %s\n", m.group());
+			//System.out.printf("match %s\n", m.group());
 			allMatches.add(m.group());
 		}
 		String TvName = null;
@@ -74,7 +74,7 @@ public class MultiThreading implements Runnable {
 		tv = matchTvShowObject(tv);
 		tv.setFullPath(fileName.getAbsolutePath());
 		
-		System.out.printf("Tv Show: %s Season %02d Episode %02d with extension: %s\n", TvName, seasonNum, episodeNum, extension);
+		//System.out.printf("Tv Show: %s Season %02d Episode %02d with extension: %s\n", TvName, seasonNum, episodeNum, extension);
 	}
 	
 	public void recursiveWalk(String rootdir ) {
