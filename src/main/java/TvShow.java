@@ -128,6 +128,9 @@ public class TvShow {
     		int selectMatch = 0;
     		try {
     			selectMatch = inp.nextInt();
+    			if (selectMatch > results.getInt("total_results")/results.getInt("total_pages") || selectMatch <= 0) {
+    				throw new InputMismatchException();
+    			}
     		} catch(InputMismatchException e) {
     			System.out.printf("Wrong input entered\nSkipping file...\n\n");
     			return;
