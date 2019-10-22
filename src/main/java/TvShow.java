@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -19,7 +20,7 @@ public class TvShow {
 	private String name;
 	private int numSeasons;
 	private int tv_id;
-	private List<Season> allSeasons;
+	private List<Season> allSeasons  = new ArrayList<Season>();
 	private Properties props;
 	private Properties sensitive;
 	private String fullPath;
@@ -45,6 +46,7 @@ public class TvShow {
 			//putting the request params in a hashmap
 			Map<String, String> params = new HashMap<>();
 			params.put("api_key", this.sensitive.getProperty("api.key"));
+			params.put("language", "en-US");
 			params.put("query", this.name);
 			params.put("page", "1");
 			//getting url to make get request and find tv show
@@ -82,9 +84,7 @@ public class TvShow {
             con.disconnect();
         }
         //System.out.println(content.toString());
-        JSONObject results = new JSONObject(content.toString());
-        int page = results.getInt("page");
-        
+        JSONObject results = new JSONObject(content.toString());        
         if(results.getInt("total_results") == 1) {
         	JSONObject temp = (JSONObject) results.getJSONArray("results").get(0);
         	this.name = temp.getString("name");
@@ -99,8 +99,39 @@ public class TvShow {
         	}
         }
         
-        System.out.printf("Matched TV show is '%s' with id: %d\n", this.name, this.tv_id);
-        
+        //System.out.printf("Matched TV show is '%s' with id: %d\nMatching now number of seasons", this.name, this.tv_id);
+        Map<String, String> paramsTv = new HashMap<>();
+		paramsTv.put("api_key", this.sensitive.getProperty("api.key"));
+		paramsTv.put("language", "en-US");
+        URL getTvInfoSeason = new URL(
+				QueryBuilder.buildURL(
+						props.getProperty("api.tvseasons.url") + this.tv_id, 
+						QueryBuilder.formatParams(paramsTv)
+				)
+		);
+        HttpURLConnection conTv = (HttpURLConnection) getTvInfoSeason.openConnection();
+        conTv.setRequestMethod("GET");
+        conTv.setConnectTimeout(10000);
+        conTv.setReadTimeout(10000);
+        conTv.setRequestProperty("Content-Type", "application/json");
+        StringBuilder contentTv;
+
+        try (BufferedReader in = new BufferedReader(
+                new InputStreamReader(conTv.getInputStream()))) {
+        	//JSONObject results
+        	String line;
+        	contentTv = new StringBuilder();
+        	while ((line = in.readLine()) != null) {
+        		contentTv.append(line);
+                contentTv.append(System.lineSeparator());
+            }
+        } finally {
+            conTv.disconnect();
+        }
+        //System.out.printf("%s\n", contentTv.toString());
+        JSONObject resultsTv = new JSONObject(contentTv.toString());
+        this.numSeasons = resultsTv.getInt("number_of_seasons");
+        //System.out.printf("num of seasons: %d\n", this.numSeasons);
 		//System.out.printf("Response of '%s' request is %d\n", con.getRequestMethod(), responseCode);
         
 		//TODO get request to the tv show id, num of seasons and name
@@ -111,7 +142,7 @@ public class TvShow {
 	
 	public void multipleResults(JSONObject results) {
 		JSONObject temp = (JSONObject) results.getJSONArray("results").get(0);
-    	System.out.printf("There are multiple possibilities when matching a TV show with the name '%s'\nIs it '%s' which started airing on %s?\n(yes or no)\n", this.name, temp.getString("name"), temp.getString("first_air_date"));
+    	System.out.printf("\n\nThere are multiple possibilities when matching a TV show with the name '%s'\nIs it '%s' which started airing on %s?\n(yes or no)\n", this.name, temp.getString("name"), temp.getString("first_air_date"));
     	Scanner inp = new Scanner(System.in);
     	String cin = inp.nextLine();
     	cin.toLowerCase();
@@ -171,10 +202,23 @@ public class TvShow {
 		this.fullPath = path;
 	}
 	
-	public void createSeason(int season_num) {
-		Season newSeason = new Season(season_num);
+	public Season getSeason(Season newSeason) {
+		for (int i = 0; i < this.allSeasons.size(); i++) {
+			if (this.allSeasons.get(i).getSeasonNum() == newSeason.getSeasonNum()) {
+				return this.allSeasons.get(i);
+			}
+		}
 		this.allSeasons.add(newSeason);
 		newSeason.setTvId(this.tv_id);
 		newSeason.setFullPath(this.fullPath);
+		newSeason.getTitleAPI();
+		return newSeason;
+	}
+
+	public Season createNewSeason(int seasonNum) {
+		Season newSeason = new Season(seasonNum);
+		newSeason = getSeason(newSeason);
+		newSeason.setTvName(this.name);
+		return newSeason;
 	}
 }
