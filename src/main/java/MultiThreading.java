@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +16,7 @@ public class MultiThreading implements Runnable {
 	private String directoryName;
 	private File directory;
 	private File[] contents;
+	private Map<String, String> rawApiTVName = new HashMap();
 	
 	public MultiThreading(String dir) throws FileNotFoundException {
 		this.directoryName = dir;
@@ -66,19 +69,36 @@ public class MultiThreading implements Runnable {
 		
 		TvShow tv = null;
 		try {
-			tv = new TvShow(TvName);
+			if((tv = matchWithName(this.rawApiTVName.get(TvName))) == null) {
+				tv = new TvShow(TvName.toLowerCase());
+				tv = matchTvShowObject(tv);
+				this.rawApiTVName.put(TvName.toLowerCase(), tv.getName());
+			} else {
+				tv = matchWithName(this.rawApiTVName.get(TvName));
+				TvName = tv.getName();
+				
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.printf("TV show name is: %s\n", tv.getName());
-		tv = matchTvShowObject(tv);
+		System.out.printf("TV show name is: %s\n", tv.getName());	
+		this.rawApiTVName.put(TvName, tv.getName());
 		tv.setFullPath(fileName.getAbsolutePath());
 		tv.createNewSeason(seasonNum).generateEpisode(episodeNum).setExtension(extension);
 		
 		//System.out.printf("Tv Show: %s Season %02d Episode %02d with extension: %s\n", TvName, seasonNum, episodeNum, extension);
 	}
 	
+	private TvShow matchWithName(String tvName) {
+		for (int i = 0; i < this.allTvShows.size(); i++) {
+			if (this.allTvShows.get(i).getName() == tvName) {
+				return this.allTvShows.get(i);
+			}
+		}
+		return null;
+	}
+
 	public void recursiveWalk(String rootdir ) {
 		File root = new File(rootdir);
 
@@ -87,7 +107,7 @@ public class MultiThreading implements Runnable {
 	
 	public TvShow matchTvShowObject(TvShow tv) {
 		for (int i = 0; i < this.allTvShows.size(); i++) {
-			if(tv.getName().equals(this.allTvShows.get(i).getName())) {
+			if(tv.getTvId() == this.allTvShows.get(i).getTvId()) {
 				return this.allTvShows.get(i);
 			}
 		}

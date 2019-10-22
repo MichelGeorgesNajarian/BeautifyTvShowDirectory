@@ -23,6 +23,7 @@ public class Season {
 	private int episode_num;
 	private int tv_id;
 	private String full_path;
+	private JSONArray query_results;
 	
 	public Season(int season_num) {
 		this.season_num = season_num;
@@ -127,9 +128,9 @@ public class Season {
         }
         //System.out.println(content.toString());
         JSONObject results = new JSONObject(content.toString());
-        JSONArray temp = results.getJSONArray("episodes");
-        for (int i = 0; i < temp.length(); i++) {
-        	System.out.printf("episode %d: %s\n", temp.getJSONObject(i).getInt("episode_number"), temp.getJSONObject(i).getString("name"));
+        this.query_results = results.getJSONArray("episodes");
+        for (int i = 0; i < this.query_results.length(); i++) {
+        	System.out.printf("episode %d: %s\n", this.query_results.getJSONObject(i).getInt("episode_number"), this.query_results.getJSONObject(i).getString("name"));
         }
 	}
 }
