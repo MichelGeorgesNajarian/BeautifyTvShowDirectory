@@ -14,9 +14,12 @@ public class Episode {
 	private Properties props;
 	private Properties sensitive;
 	private int tv_id;
+	private String TV_name;
+	private int season_num;
+	private String formatted_name;
 	
 	public Episode(int episodeNum) {
-		this.episode_number = episodeNum;
+		this.setEpisodeNumber(episodeNum);
 		
 		props = new Properties();
 		sensitive = new Properties();
@@ -31,27 +34,22 @@ public class Episode {
 	}
 
 	public int getEpisodeNumber() {
-		return this.episode_number;
+		return episode_number;
 	}
-	
-	public void setEpisodeNumber(int num) {
-		this.episode_number = num;
+
+	public void setEpisodeNumber(int episode_number) {
+		this.episode_number = episode_number;
 	}
-		
+
+
+
 	public String getExtension() {
 		return this.extension;
 	}
 	
 	public void setExtension(String ext) {
 		this.extension = ext;
-	}
-	
-	public String getEpisodeTitle() {
-		return this.episode_title;
-	}
-	
-	public void setEpisodeTitle(String title) {
-		this.episode_title = title;
+		createFormattedName();
 	}
 	
 	public String getFullPath() {
@@ -62,10 +60,6 @@ public class Episode {
 		this.setFull_path(path);
 	}
 
-	public String getFull_path() {
-		return full_path;
-	}
-
 	public int getTvId() {
 		return this.tv_id;
 	}
@@ -74,7 +68,40 @@ public class Episode {
 		this.tv_id = id;
 	}
 	
+	public String getTvName() {
+		return this.TV_name;
+	}
+	
+	public void setTvName(String name) {
+		this.TV_name = name;
+	}
+	
+	public int getSeasonNum() {
+		return this.season_num;
+	}
+
+	public void setSeasonNum(int num) {
+		this.season_num = num;
+	}
+	
+	public String getFull_path() {
+		return this.full_path;
+	}
+	
 	public void setFull_path(String full_path) {
 		this.full_path = full_path;
-	}	
+	}
+	
+	public void createFormattedName() {
+		this.formatted_name = String.format("%s S%02dE%02d - %s%s", this.TV_name, this.season_num, this.getEpisodeNumber(), this.getEpisodeTitle(), this.extension);
+		System.out.printf("%s\n", this.formatted_name);
+	}
+
+	public String getEpisodeTitle() {
+		return episode_title;
+	}
+
+	public void setEpisodeTitle(String episode_title) {
+		this.episode_title = episode_title;
+	}
 }

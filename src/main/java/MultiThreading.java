@@ -82,7 +82,7 @@ public class MultiThreading implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.printf("TV show name is: %s\n", tv.getName());	
+		//System.out.printf("TV show name is: %s\n", tv.getName());	
 		this.rawApiTVName.put(TvName, tv.getName());
 		tv.setFullPath(fileName.getAbsolutePath());
 		tv.createNewSeason(seasonNum).generateEpisode(episodeNum).setExtension(extension);

@@ -142,7 +142,7 @@ public class TvShow {
 	
 	public void multipleResults(JSONObject results) {
 		JSONObject temp = (JSONObject) results.getJSONArray("results").get(0);
-    	System.out.printf("There are multiple possibilities when matching a TV show with the name '%s'\nIs it '%s' which started airing on %s?\n(yes or no)\n", this.name, temp.getString("name"), temp.getString("first_air_date"));
+    	System.out.printf("\n\nThere are multiple possibilities when matching a TV show with the name '%s'\nIs it '%s' which started airing on %s?\n(yes or no)\n", this.name, temp.getString("name"), temp.getString("first_air_date"));
     	Scanner inp = new Scanner(System.in);
     	String cin = inp.nextLine();
     	cin.toLowerCase();
@@ -218,6 +218,7 @@ public class TvShow {
 	public Season createNewSeason(int seasonNum) {
 		Season newSeason = new Season(seasonNum);
 		newSeason = getSeason(newSeason);
+		newSeason.setTvName(this.name);
 		return newSeason;
 	}
 }

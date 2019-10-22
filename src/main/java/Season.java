@@ -23,6 +23,7 @@ public class Season {
 	private int episode_num;
 	private int tv_id;
 	private String full_path;
+	private String tv_name; 
 	private JSONArray query_results;
 	
 	public Season(int season_num) {
@@ -67,6 +68,9 @@ public class Season {
 		Episode new_ep = new Episode(episodeNum);
 		new_ep = getEpisode(new_ep);
 		new_ep.setTvId(this.tv_id);
+		new_ep.setEpisodeTitle(this.query_results.getJSONObject(episodeNum - 1).getString("name"));
+		new_ep.setSeasonNum(this.season_num);
+		new_ep.setTvName(this.tv_name);
 		return new_ep;
 	}
 
@@ -129,8 +133,16 @@ public class Season {
         //System.out.println(content.toString());
         JSONObject results = new JSONObject(content.toString());
         this.query_results = results.getJSONArray("episodes");
-        for (int i = 0; i < this.query_results.length(); i++) {
-        	System.out.printf("episode %d: %s\n", this.query_results.getJSONObject(i).getInt("episode_number"), this.query_results.getJSONObject(i).getString("name"));
-        }
+//        for (int i = 0; i < this.query_results.length(); i++) {
+//        	System.out.printf("episode %d: %s\n", this.query_results.getJSONObject(i).getInt("episode_number"), this.query_results.getJSONObject(i).getString("name"));
+//        }
+	}
+
+	public String getTvName() {
+		return tv_name;
+	}
+
+	public void setTvName(String tv_name) {
+		this.tv_name = tv_name;
 	}
 }
