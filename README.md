@@ -11,7 +11,7 @@ and to run:
 
 `java -jar target/BeautifyTvShowDirectory-0.0.1-SNAPSHOT.jar $rootTvDirectory` (replace `$rootTvDirectory` with the specific directory you want to beautify or with `test/` which is a test directory that contains two sample files to beautify).
 
-To get it to work on eclipse, on the *Run Configurations* window, have `clean install exec:java1` as the goals
+**To get it to work on eclipse**, on the *Run Configurations* window, have `clean install exec:java1` as the goals
 
 **_NOTE:_** When executing from the Eclipse IDE, the root directory to beautify will always be the *test/* directory unless modified in the [pom.xml](https://github.com/MichelGeorgesNajarian/BeautifyTvShowDirectory/blob/master/pom.xml) line 38.
 
