@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -19,7 +20,7 @@ public class TvShow {
 	private String name;
 	private int numSeasons;
 	private int tv_id;
-	private List<Season> allSeasons;
+	private List<Season> allSeasons  = new ArrayList<Season>();
 	private Properties props;
 	private Properties sensitive;
 	private String fullPath;
@@ -141,7 +142,7 @@ public class TvShow {
 	
 	public void multipleResults(JSONObject results) {
 		JSONObject temp = (JSONObject) results.getJSONArray("results").get(0);
-    	System.out.printf("There are multiple possibilities when matching a TV show with the name '%s'\nIs it '%s' which started airing on %s?\n(yes or no)\n", this.name, temp.getString("name"), temp.getString("first_air_date"));
+    	System.out.printf("\n\nThere are multiple possibilities when matching a TV show with the name '%s'\nIs it '%s' which started airing on %s?\n(yes or no)\n", this.name, temp.getString("name"), temp.getString("first_air_date"));
     	Scanner inp = new Scanner(System.in);
     	String cin = inp.nextLine();
     	cin.toLowerCase();
@@ -201,10 +202,23 @@ public class TvShow {
 		this.fullPath = path;
 	}
 	
-	public void createSeason(int season_num) {
-		Season newSeason = new Season(season_num);
+	public Season getSeason(Season newSeason) {
+		for (int i = 0; i < this.allSeasons.size(); i++) {
+			if (this.allSeasons.get(i).getSeasonNum() == newSeason.getSeasonNum()) {
+				return this.allSeasons.get(i);
+			}
+		}
 		this.allSeasons.add(newSeason);
 		newSeason.setTvId(this.tv_id);
 		newSeason.setFullPath(this.fullPath);
+		newSeason.getTitleAPI();
+		return newSeason;
+	}
+
+	public Season createNewSeason(int seasonNum) {
+		Season newSeason = new Season(seasonNum);
+		newSeason = getSeason(newSeason);
+		newSeason.setTvName(this.name);
+		return newSeason;
 	}
 }
