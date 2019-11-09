@@ -1,12 +1,16 @@
 package main.java;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import javax.management.InstanceNotFoundException;
 
 public class CLIOptions {
 	
 	private List<Opts> allOpt = new ArrayList<Opts>(); //object with all the CLI options
 	private List<String> dirs2beautify = new ArrayList<String>(); // list of all the dirs given to beautify
+	private HashMap<String, Character> longNameMatchings = new HashMap<>();
 
 	public CLIOptions(String[] args) {
 		//putting all options in HashMap
@@ -16,6 +20,13 @@ public class CLIOptions {
 		allOpt.add(new Opts('h', 0));
 		allOpt.add(new Opts('m', 0));
 		allOpt.add(new Opts('d', 1));
+		this.longNameMatchings.put("--append", 'a');
+		this.longNameMatchings.put("--log", 'l');
+		this.longNameMatchings.put("--first", 'f');
+		this.longNameMatchings.put("--help", 'h');
+		this.longNameMatchings.put("--move", 'm');
+		this.longNameMatchings.put("--destination", 'd');
+		
 //		if (args[0].equals("-h") || args[0].contentEquals("--help")) {
 //			printHelpPage();
 //			return;
@@ -24,21 +35,33 @@ public class CLIOptions {
 			if (args[i].charAt(0) == '-') { //handle option declaration
 				Opts currOpt = null;
 				if (args[i].charAt(1) == '-') { //handle full name declaration
-					currOpt = matchOpt(args[i].charAt(2));
+					try {
+						currOpt = matchOpt(this.longNameMatchings.get(args[i]));
+					} catch (InstanceNotFoundException e1) {
+						System.out.printf("%s is not a recognized option.\nif you need help or to see all the available options, use the -h option to open the help page\n" , args[i]);
+						return;
+					}
 					currOpt.setValue(true);
 					try {
-						currOpt.addOpts(args[i].split("=")[1]);
+						if (currOpt.getNumOpt() == 1) { // only do this if there is exactly 1 argument to pass for this option
+							currOpt.addOpts(args[i].split("=")[1]);
+						}
 					} catch (IndexOutOfBoundsException e) {
 						System.out.printf("Wrong format passed for %s. Expected format is:\n--option=argument\n", args[i]);
 					}
 				} else { //handle short notation
-					currOpt = matchOpt(args[i].charAt(1));
+					try {
+						currOpt = matchOpt(args[i].charAt(1));
+					} catch (InstanceNotFoundException e1) {
+						System.out.printf("%s is not a recognized option.\nif you need help or to see all the available options, use the -h option to open the help page\n" , args[i]);
+						return;
+					}
 					currOpt.setValue(true);
 					int temp = ++i;
 					try {
 						for (; i < temp + currOpt.getNumOpt(); i++) {
-							if (args[i].charAt(0) == '-') {
-								currOpt.setValue(false);
+							if (args[i].charAt(0) == '-') { //if less arguments passed with option than required
+								currOpt.setValue(false); //disable the option
 								throw new IndexOutOfBoundsException();
 							} else {
 								currOpt.addOpts(args[i]);
@@ -67,13 +90,13 @@ public class CLIOptions {
 		}
 	}
 
-	private Opts matchOpt(char arg) {
+	private Opts matchOpt(char arg) throws InstanceNotFoundException {
 		for (int i = 0; i < this.allOpt.size(); i++) {
 			if (this.allOpt.get(i).getName() == arg) {
 				return this.allOpt.get(i);
 			}
 		}
-		return null;
+		throw new InstanceNotFoundException();
 	}
 
 	public List<Opts> getAllOpt() {
@@ -82,6 +105,22 @@ public class CLIOptions {
 
 	public void setAllOpt(List<Opts> allOpt) {
 		this.allOpt = allOpt;
+	}
+
+	public List<String> getDirs2Beautify() {
+		return dirs2beautify;
+	}
+
+	public void setDirs2Beautify(List<String> dir) {
+		this.dirs2beautify = dir;
+	}
+	
+	public HashMap<String, Character> getLongNameMatchings() {
+		return longNameMatchings;
+	}
+
+	public void setLongNameMatchings(HashMap<String, Character> longNameMatchings) {
+		this.longNameMatchings = longNameMatchings;
 	}
 
 	private void printHelpPage() {
