@@ -37,7 +37,7 @@
       		<arguments>
       			<argument>-f</argument>
       			<argument>-l</argument>
-      			<argument>-m</argument>
+      			<argument>-h</argument>
       			<argument>-d</argument>
       			<argument>test_directory</argument>
       			<argument>test/</argument>

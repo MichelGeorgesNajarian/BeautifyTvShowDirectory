@@ -27,10 +27,6 @@ public class CLIOptions {
 		this.longNameMatchings.put("--move", 'm');
 		this.longNameMatchings.put("--destination", 'd');
 		
-//		if (args[0].equals("-h") || args[0].contentEquals("--help")) {
-//			printHelpPage();
-//			return;
-//		}
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].charAt(0) == '-') { //handle option declaration
 				Opts currOpt = null;
@@ -71,6 +67,13 @@ public class CLIOptions {
 						System.out.printf("wrong use of options %s. Expected %d argument(s) after the option declaration but got %d\n", args[i-1], currOpt.getNumOpt(), currOpt.getLastIndex());
 					}
 					i--; // to not skip record which comes after all of the arguments of an option are parsed
+				}
+				if (currOpt.getName() == 'h') { //requested help page, need to invalidate all other options, print helppage and exit
+					for (int k = 0; k < this.allOpt.size(); k++) {
+						this.allOpt.get(k).setValue(false);
+					}
+					currOpt.setValue(true);
+					return;
 				}
 			} else {
 				dirs2beautify.add(args[i]);
@@ -123,9 +126,18 @@ public class CLIOptions {
 		this.longNameMatchings = longNameMatchings;
 	}
 
-	private void printHelpPage() {
-		// TODO Auto-generated method stub
-		
+	public void printHelpPage() {
+		System.out.printf("Help page printed\n");
+	}
+
+	public boolean helpRequested() {
+		for (int i = 0; i < this.allOpt.size(); i++) {
+			Opts currOpt = this.allOpt.get(i);
+			if (currOpt.getName() == 'h') {
+				return currOpt.isValue();
+			}
+		}
+		return false;
 	}
 
 }
