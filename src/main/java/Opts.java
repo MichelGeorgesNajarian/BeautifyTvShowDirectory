@@ -1,11 +1,11 @@
 package main.java;
 
 public class Opts {
-	private char name;
-	private int numOpt;
-	private int lastIndex;
-	private String[] opts;
-	private boolean value;
+	private char name; //name of the option EG help
+	private int numOpt; // max number of options the option accepts (might have less)
+	private int lastIndex; // if multiple options last index is to keep track of the last index if there are less items in opts array than the max allowed
+	private String[] opts; // Array of all the options being passed
+	private boolean value; // boolean to see if option is active or not
 	
 	public Opts(char name, int num) {
 		this.value = false; //false by default, becomes true if option is passed in command line
