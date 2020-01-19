@@ -72,6 +72,9 @@ public class MultiThreading implements Runnable {
 			if((tv = matchWithName(this.rawApiTVName.get(TvName))) == null) {
 				tv = new TvShow(TvName.toLowerCase());
 				tv = matchTvShowObject(tv);
+				if (tv.getTvId() == 0) {
+					return;
+				}
 				this.rawApiTVName.put(TvName.toLowerCase(), tv.getName());
 			} else {
 				tv = matchWithName(this.rawApiTVName.get(TvName));
