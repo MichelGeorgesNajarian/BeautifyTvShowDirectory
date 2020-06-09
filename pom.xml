@@ -40,7 +40,11 @@
       			<argument>-h</argument>
       			<argument>-d</argument>
       			<argument>test_directory</argument>-->
-      			<argument>--destination=tv_shows</argument>
+      			<argument>-a</argument>
+      			<argument>-m</argument>
+      			<!--<argument>-destination=tv_shows</argument>-->
+      			<argument>-d</argument>
+      			<argument>directory2</argument>
       			<argument>test/</argument>
       		</arguments>
       	</configuration>

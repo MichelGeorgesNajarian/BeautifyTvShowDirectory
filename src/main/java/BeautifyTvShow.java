@@ -14,6 +14,11 @@ public class BeautifyTvShow {
 			opt.printHelpPage();
 			return;
 		}
+		if (opt.getAllOpt().get(0).isValue() && opt.getAllOpt().get(4).isValue()) {
+			System.out.printf("\n\n!!Options 'append' and 'move' cannot both be selected together.\nCheck the manual page to see how the options work.\n\n");
+			opt.printHelpPage();
+			return;
+		}
 		for (int i = 0; i < opt.getDirs2Beautify().size(); i++) {
 			try {
 				DirThread[i] = new Thread(new MultiThreading(opt.getDirs2Beautify().get(i)));

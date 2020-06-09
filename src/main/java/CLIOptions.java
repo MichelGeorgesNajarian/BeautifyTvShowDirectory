@@ -155,7 +155,7 @@ public class CLIOptions {
 				+ "\t--firts / -f: always match with the first result from the API\n"
 				+ "\t--help / -h: print this page\n"
 				+ "\t--move / -m: do NOT keep the old file, just the new file\n"
-				+ "\t--destination / -d: directory where the beautified files are to be put. EG --destination=TV OR --d TV\n\n"
+				+ "\t--destination / -d: directory where the beautified files are to be put. EG --destination=TV OR -d TV\n\n"
                                 + "directory1/ directory2/ directory3/ are the directories to beautify\n\n"
 				+ "For additional help or issues, please visit GitHub page: https://github.com/MichelGeorgesNajarian/BeautifyTvShowDirectory and submit a new issue\n");
 	}
