@@ -3,7 +3,7 @@
 ## Compilation instructions
 
 Compilation will be done by Maven which will install all of the dependencies.
-To get anexecutable JAR with the dependencies in the CLI, execute:
+To get an executable JAR with the dependencies in the CLI, execute:
 
 `mvn clean compile assembly:single`
 

@@ -14,9 +14,9 @@ public class BeautifyTvShow {
 			opt.printHelpPage();
 			return;
 		}
-		for (int i = 0; i < args.length; i++) {
+		for (int i = 0; i < opt.getDirs2Beautify().size(); i++) {
 			try {
-				DirThread[i] = new Thread(new MultiThreading(args[i]));
+				DirThread[i] = new Thread(new MultiThreading(opt.getDirs2Beautify().get(i)));
 				DirThread[i].start();
 			} catch(FileNotFoundException e) {
 				System.out.printf("\n\n!!File or Directory '%s' does not exist!!\n\n", args[i]);

@@ -36,12 +36,13 @@ public class CLIOptions {
 				Opts currOpt = null;
 				if (args[i].charAt(1) == '-') { //handle full name declaration
 					try {
-						currOpt = matchOpt(this.longNameMatchings.get(args[i])); //matching with the correct opt object
+						currOpt = matchOpt(this.longNameMatchings.get(args[i].split("=")[0])); //matching with the correct opt object split in case of "=" of --destination
 					} catch (InstanceNotFoundException e1) {
 						System.out.printf("%s is not a recognized option.\nif you need help or to see all the available options, use the -h option to open the help page\n" , args[i]);
 						return;
 					}
 					currOpt.setValue(true); //set the opt object as active
+					currOpt.addOpts(args[i].split("=")[1]);
 					try {
 						if (currOpt.getNumOpt() == 1) { // only do this if there is exactly 1 argument to pass for this option
 							currOpt.addOpts(args[i].split("=")[1]);
@@ -104,7 +105,7 @@ public class CLIOptions {
 			System.out.printf("option %d : %c | active/not active: %b | number of options: %d\n", i, temp.getName(), temp.isValue(), temp.getLastIndex());
 			if (temp.getLastIndex() != 0) {
 				for (int j = 0; j < temp.getLastIndex(); j++) {
-					System.out.printf("option %d is %s\n", j, temp.getOpts()[j]);
+					System.out.printf("option %d is %s\n", j+1, temp.getOpts()[j]);
 				}
 			}
 		}//printing the parsed directories to beautify
