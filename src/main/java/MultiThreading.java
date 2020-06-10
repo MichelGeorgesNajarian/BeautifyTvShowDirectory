@@ -15,15 +15,12 @@ public class MultiThreading implements Runnable {
 	private List<TvShow> allTvShows = new ArrayList<TvShow>();
 	private String directoryName;
 	private File directory;
-	private File[] contents;
 	private Map<String, String> rawApiTVName = new HashMap<>();
 	
 	public MultiThreading(CLIOptions opt, int i) throws FileNotFoundException {
 		this.directoryName = opt.getDirs2Beautify().get(i);
 		this.directory = new File(this.directoryName);	
-		if (this.directory.exists()) { 
-			this.contents = this.directory.listFiles();
-		} else {
+		if (!this.directory.exists()) {
 			throw new FileNotFoundException("Directory " + this.directoryName + " does not exist\n");
 		}
 	}
