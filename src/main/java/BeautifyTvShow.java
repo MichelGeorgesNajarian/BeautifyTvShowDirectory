@@ -1,5 +1,6 @@
 package main.java;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
@@ -19,9 +20,17 @@ public class BeautifyTvShow {
 			opt.printHelpPage();
 			return;
 		}
+		if (opt.getAllOpt().get(5).isValue()) {
+			File resDir = new File(opt.getAllOpt().get(5).getOpts()[0]); //getting the result directory if selected
+			if (!resDir.exists()) {
+				if (!resDir.mkdir()) {
+					System.out.printf("An error occured while creating the directory %s.\nExiting...\n", opt.getAllOpt().get(5).getOpts()[0]);
+				}
+			}
+		}
 		for (int i = 0; i < opt.getDirs2Beautify().size(); i++) {
 			try {
-				DirThread[i] = new Thread(new MultiThreading(opt.getDirs2Beautify().get(i)));
+				DirThread[i] = new Thread(new MultiThreading(opt, i));
 				DirThread[i].start();
 			} catch(FileNotFoundException e) {
 				System.out.printf("\n\n!!File or Directory '%s' does not exist!!\n\n", args[i]);

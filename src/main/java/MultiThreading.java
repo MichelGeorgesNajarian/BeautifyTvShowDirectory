@@ -16,31 +16,21 @@ public class MultiThreading implements Runnable {
 	private String directoryName;
 	private File directory;
 	private File[] contents;
-	private Map<String, String> rawApiTVName = new HashMap();
+	private Map<String, String> rawApiTVName = new HashMap<>();
 	
-	public MultiThreading(String dir) throws FileNotFoundException {
-		this.directoryName = dir;
+	public MultiThreading(CLIOptions opt, int i) throws FileNotFoundException {
+		this.directoryName = opt.getDirs2Beautify().get(i);
 		this.directory = new File(this.directoryName);	
 		if (this.directory.exists()) { 
 			this.contents = this.directory.listFiles();
 		} else {
-			throw new FileNotFoundException("Directory " + this.directoryName + " does not exist");
+			throw new FileNotFoundException("Directory " + this.directoryName + " does not exist\n");
 		}
 	}
 	
 	@Override
 	public void run() {
-		System.out.printf("using directory: %s\n", this.directoryName);
-		for (int i = 0; i < this.contents.length; i++) {
-			if (this.contents[i].isFile()) {
-				//System.out.printf("File is: %s\n", this.contents[i].getName());
-				fileHandler(this.contents[i]);
-			} else if (this.contents[i].isDirectory()) {
-				//System.out.printf("Directory is: %s\n", this.contents[i].getName());
-				recursiveWalk(this.directoryName + "/" + this.contents[i].getName());
-			}
-		}
-
+		recursiveWalk(directory);
 	}
 	
 	public void fileHandler(File fileName) {
@@ -102,10 +92,15 @@ public class MultiThreading implements Runnable {
 		return null;
 	}
 
-	public void recursiveWalk(String rootdir ) {
-		File root = new File(rootdir);
-
-		//TvShow show = new TvShow(rootdir.split("/")[1]);
+	public void recursiveWalk(File rootdir) {
+		System.out.printf("Using directory: %s\n", rootdir.getName());
+		for (File file : rootdir.listFiles()) {
+			if (file.isFile()) {
+				fileHandler(file);
+			} else if (file.isDirectory()) {
+				recursiveWalk(file);
+			}
+		}
 	}
 	
 	public TvShow matchTvShowObject(TvShow tv) {
