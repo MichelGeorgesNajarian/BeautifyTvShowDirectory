@@ -16,8 +16,10 @@ public class MultiThreading implements Runnable {
 	private String directoryName;
 	private File directory;
 	private Map<String, String> rawApiTVName = new HashMap<>();
+	private CLIOptions opts;
 	
 	public MultiThreading(CLIOptions opt, int i) throws FileNotFoundException {
+		this.opts = opt;
 		this.directoryName = opt.getDirs2Beautify().get(i);
 		this.directory = new File(this.directoryName);	
 		if (!this.directory.exists()) {
@@ -28,8 +30,9 @@ public class MultiThreading implements Runnable {
 	@Override
 	public void run() {
 		recursiveWalk(directory);
+		renameFiles();
 	}
-	
+
 	public void fileHandler(File fileName) {
 		String filteredFileName = fileName.getName().replaceAll("(\\s)*[\\[|\\(](\\s)*.*?(\\s)*[\\]\\)](\\s)*", "");
 		String getSeasonEpisode = "(.+?)(?=([\\.|\\s|\\-]+[s|S]\\d+))|([s|S]\\d+)|([e|E]\\d+)|(\\.(?:.(?!\\.))+$)";
@@ -97,6 +100,14 @@ public class MultiThreading implements Runnable {
 			} else if (file.isDirectory()) {
 				recursiveWalk(file);
 			}
+		}
+	}
+	
+	private void renameFiles() {
+		// TODO Auto-generated method stub
+//		System.out.print(this.allTvShows);
+		for (TvShow show : this.allTvShows) {
+			
 		}
 	}
 	
