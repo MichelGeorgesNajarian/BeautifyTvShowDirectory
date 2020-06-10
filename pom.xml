@@ -45,6 +45,8 @@
       			<!--<argument>-destination=tv_shows</argument>-->
       			<argument>-d</argument>
       			<argument>directory2</argument>
+      			<argument>-u</argument>
+      			<argument>LOG</argument>
       			<argument>test/</argument>
       		</arguments>
       	</configuration>
