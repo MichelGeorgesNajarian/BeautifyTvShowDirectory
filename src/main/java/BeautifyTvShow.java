@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 
-public class BeautifyTvShow {
+public class BeautifyTvShow implements ANSIColors {
 		
 	public static void main(String[] args) throws FileNotFoundException {
 		Thread[] DirThread = new Thread[args.length];
@@ -16,7 +16,8 @@ public class BeautifyTvShow {
 			return;
 		}
 		if (opt.getAllOpt().get(0).isValue() && opt.getAllOpt().get(4).isValue()) {
-			System.out.printf("\n\n!!Options 'append' and 'move' cannot both be selected together.\nCheck the manual page to see how the options work.\n\n");
+			System.out.printf(ANSI_RED + "\n\n!!Options 'append' and 'move' cannot both be selected together.\n"
+					+ "Check the manual page to see how the options work.\n\n" + ANSI_RESET);
 			opt.printHelpPage();
 			return;
 		}
@@ -24,7 +25,7 @@ public class BeautifyTvShow {
 			File resDir = new File(opt.getAllOpt().get(5).getOpts()[0]); //getting the result directory if selected
 			if (!resDir.exists()) {
 				if (!resDir.mkdir()) {
-					System.out.printf("An error occured while creating the directory %s.\nExiting...\n", opt.getAllOpt().get(5).getOpts()[0]);
+					System.out.printf(ANSI_RED + "An error occured while creating the directory %s.\nExiting...\n" + ANSI_RESET, opt.getAllOpt().get(5).getOpts()[0]);
 				}
 			}
 		}
@@ -33,7 +34,7 @@ public class BeautifyTvShow {
 				DirThread[i] = new Thread(new MultiThreading(opt, i));
 				DirThread[i].start();
 			} catch(FileNotFoundException e) {
-				System.out.printf("\n\n!!File or Directory '%s' does not exist!!\n\n", args[i]);
+				System.out.printf(ANSI_RED + "\n\n!!File or Directory '%s' does not exist!!\n\n" + ANSI_RESET, args[i]);
 			}
 		}
 		for (Thread individualThread : DirThread) {
@@ -42,11 +43,11 @@ public class BeautifyTvShow {
 					individualThread.join();
 				}
 			} catch (InterruptedException e) {
-				System.out.printf("join failed!\n");
+				System.out.printf(ANSI_RESET + "join failed!\n" + ANSI_RESET);
 				e.printStackTrace();
 			}
 		}
-		System.out.printf("All threads joined succesfully!\n");
+		System.out.printf(ANSI_GREEN + "All threads joined succesfully!\n" + ANSI_RESET);
 		Properties props = new Properties();
 		Properties sensitive = new Properties();
 		try {

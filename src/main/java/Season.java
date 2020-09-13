@@ -12,15 +12,15 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Season {
+public class Season implements ANSIColors {
 	
 	private int season_num;
 	private List<Episode> allEpisodes = new ArrayList<Episode>();
 	private Properties props;
 	private Properties sensitive;
-	private int episode_num;
 	private int tv_id;
 	private String full_path;
 	private String tv_name; 
@@ -64,11 +64,19 @@ public class Season {
 		this.full_path = fullPath;		
 	}
 	
-	public Episode generateEpisode(int episodeNum) {
+	public Episode generateEpisode(int episodeNum) throws Exception {
 		Episode new_ep = new Episode(episodeNum);
 		new_ep = getEpisode(new_ep);
 		new_ep.setTvId(this.tv_id);
-		new_ep.setEpisodeTitle(this.query_results.getJSONObject(episodeNum - 1).getString("name"));
+		try {
+			new_ep.setEpisodeTitle(this.query_results.getJSONObject(episodeNum - 1).getString("name"));	
+		} catch (JSONException e) {
+			System.out.printf(ANSI_RED + "\n\nAn error occured with file: %s\nit seems that %s (id: %d) does not have an episode %d in season %d."
+					+ "\nPlease verify your information and try again\n\n" + ANSI_RESET, this.full_path, this.tv_name, this.tv_id, episodeNum, this.season_num);
+			this.allEpisodes.remove(new_ep);
+			throw new Exception();
+		}
+		new_ep.setFullPath(this.full_path);
 		new_ep.setSeasonNum(this.season_num);
 		new_ep.setTvName(this.tv_name);
 		return new_ep;
@@ -85,7 +93,7 @@ public class Season {
 		return new_ep;
 	}
 
-	public void getTitleAPI() {
+	public void getTitleAPI() throws Exception {
 		Map<String, String> params = new HashMap<>();
 		params.put("api_key", this.sensitive.getProperty("api.key"));
 		params.put("language", "en-US");
@@ -101,7 +109,6 @@ public class Season {
 			e.printStackTrace();
 		}
 		HttpURLConnection con = null;
-		try {
 			con = (HttpURLConnection) getTvInfoUrl.openConnection();
 			con.setRequestMethod("GET");
 			//request header JSON
@@ -109,12 +116,14 @@ public class Season {
 			//timeout after 10 seconds for both connect and read
 			con.setConnectTimeout(10000);
 			con.setReadTimeout(10000);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			if (con.getResponseCode() > 399) {
+				System.out.printf(ANSI_RED + "\n\nAn error occured with file: %s\nit seems that %s (id: %d) does not have a season %d."
+						+ "\nPlease verify your information and try again\n\n" + ANSI_RESET, this.full_path, this.tv_name, this.tv_id, this.season_num);
+				throw new Exception();
+			}
+				
 		StringBuilder content = null;
-
+		
         try (BufferedReader in = new BufferedReader(
                 new InputStreamReader(con.getInputStream()))) {
         	//JSONObject results
@@ -145,4 +154,12 @@ public class Season {
 	public void setTvName(String tv_name) {
 		this.tv_name = tv_name;
 	}
+	
+	public List<Episode> getAllEpisodes() {
+		return this.allEpisodes;
+	}
+	
+	public void setAllEpisodes(List<Episode> allEpisodes) {
+		this.allEpisodes = allEpisodes;
+	} 
 }

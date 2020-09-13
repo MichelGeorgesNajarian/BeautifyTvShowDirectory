@@ -35,16 +35,16 @@
       	<configuration>
       		<mainClass>main.java.BeautifyTvShow</mainClass>
       		<arguments>
-      			<!--<argument>-f</argument>
-      			<argument>-l</argument>
+      			<argument>-f</argument>
+      			<!-- <argument>-l</argument>
       			<argument>-h</argument>
       			<argument>-d</argument>
       			<argument>test_directory</argument>-->
       			<argument>-a</argument>
       			<!-- <argument>-m</argument>-->
       			<!--<argument>-destination=tv_shows</argument>-->
-      			<argument>-d</argument>
-      			<argument>directory2</argument>
+      			<!--<argument>-d</argument>
+      			<argument>directory2</argument>-->
       			<argument>-u</argument>
       			<argument>LOG</argument>
       			<argument>test/</argument>

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public class Episode {
+public class Episode implements ANSIColors {
 	private int episode_number;
 	private String extension;
 	private String episode_title;
@@ -94,7 +94,15 @@ public class Episode {
 	
 	public void createFormattedName() {
 		this.formatted_name = String.format("%s S%02dE%02d - %s%s", this.TV_name, this.season_num, this.getEpisodeNumber(), this.getEpisodeTitle(), this.extension);
-		System.out.printf("%s\n", this.formatted_name);
+		System.out.printf(ANSI_GREEN + "%s\n" + ANSI_RESET, this.formatted_name);
+	}
+	
+	public String getFormattedName() {
+		return this.formatted_name;
+	}
+	
+	public void setFormattedName(String formattedName) {
+		this.formatted_name = formattedName;
 	}
 
 	public String getEpisodeTitle() {

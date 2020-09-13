@@ -3,3 +3,8 @@
 /bin/main/resources/sensitive.properties
 /bin/
 **/.metadata/
+test/
+test2/
+directory*/
+results/
+*.log
