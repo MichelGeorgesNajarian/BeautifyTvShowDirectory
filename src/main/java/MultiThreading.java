@@ -2,6 +2,7 @@ package main.java;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -10,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.management.InstanceNotFoundException;
 
 public class MultiThreading implements Runnable, ANSIColors {
 
@@ -120,27 +123,59 @@ public class MultiThreading implements Runnable, ANSIColors {
 	private void renameFiles() {
 		// TODO Auto-generated method stub
 //		System.out.print(this.allTvShows);
-		File resultDir;
-		if (opts.getAllOpt().get(5).isValue()) {
-			resultDir = new File(opts.getAllOpt().get(5).getOpts()[0]);
-		
-		} else {
-			resultDir = new File (this.directory.getAbsolutePath() + "/beautified");
+		File resultDir = null;
+		boolean log = false;
+		try {
+			log = opts.matchOpt('l').isValue();
+			if (opts.matchOpt('d').isValue()) {
+					resultDir = new File(opts.matchOpt('d').getOpts()[0]);
+			} else {
+				resultDir = new File (this.directory.getAbsolutePath() + "/beautified");
+			}
+		} catch (InstanceNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		if (!resultDir.exists()) resultDir.mkdir();
-		for (TvShow show : this.allTvShows) {
-			File currTV = new File(resultDir.getAbsolutePath() + "/" + show.getName());
-			if (!currTV.exists()) currTV.mkdir();
-			for (Season s : show.getAllSeasons()) {
-				File currSeason = new File(currTV.getAbsolutePath() + "/" + "Season " + s.getSeasonNum());
-				if (!currSeason.exists()) currSeason.mkdir();
-				for (Episode e : s.getAllEpisodes()) {
-					File newEpisode = new File(currSeason.getAbsolutePath() + "/" + e.getFormattedName());
-					File oldEpisode = new File(e.getFull_path());
-					oldEpisode.renameTo(newEpisode);
-					System.out.println(newEpisode.exists());
+		File logFile = null;
+		if (log) {
+			logFile = new File(resultDir.getAbsoluteFile() + "/BEAUTIFY.LOG");
+			try {
+				logFile.createNewFile();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				System.out.printf(ANSI_RED + "An error occured when creating logfile BEATUIFY.LOG in directory %s\n"
+						+ "Make sure that you have the right permissions and try again\n" + ANSI_RESET, logFile.getParent());
+				return;
+			}
+		}
+		FileWriter logEvents = null;
+		try {
+			if (log) logEvents = new FileWriter(logFile.getAbsolutePath());
+			for (TvShow show : this.allTvShows) {
+				if (show.getAllSeasons().size() > 0) {
+					File currTV = new File(resultDir.getAbsolutePath() + "/" + show.getName());
+					if (!currTV.exists()) currTV.mkdir();
+					for (Season s : show.getAllSeasons()) {
+						if (s.getAllEpisodes().size() > 0) {
+							File currSeason = new File(currTV.getAbsolutePath() + "/" + "Season " + s.getSeasonNum());
+							if (!currSeason.exists()) currSeason.mkdir();
+							for (Episode e : s.getAllEpisodes()) {
+								File newEpisode = new File(currSeason.getAbsolutePath() + "/" + e.getFormattedName());
+								File oldEpisode = new File(e.getFull_path());
+								oldEpisode.renameTo(newEpisode);
+								System.out.println(newEpisode.exists());
+								if (log) logEvents.write(oldEpisode.getAbsolutePath() + "|" + newEpisode.getAbsolutePath() + "\n");
+							}
+						}
+					}
 				}
 			}
+			if (log) logEvents.close();
+		} catch (IOException e1) {
+			System.out.printf(ANSI_RED + "An error occured when trying to write to logfile BEATUIFY.LOG in directory %s\n"
+					+ "Make sure that you have the right permissions and try again\n" + ANSI_RESET, logFile.getParent());
+			return;
 		}
 	}
 	

@@ -93,7 +93,7 @@ public class TvShow implements ANSIColors {
         //System.out.println(content.toString());
         JSONObject results = new JSONObject(content.toString());        
         try {
-			if(results.getInt("total_results") == 1 || opts.matchOpt('f').isValue()) {
+			if(results.getInt("total_results") == 1 || opts.matchOpt('f').isValue() && results.getInt("total_results") > 1) {
 				JSONObject temp = (JSONObject) results.getJSONArray("results").get(0);
 				this.name = temp.getString("name");
 				this.tv_id = temp.getInt("id");
