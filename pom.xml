@@ -41,13 +41,15 @@
       			<argument>-d</argument>
       			<argument>test_directory</argument>-->
       			<argument>-a</argument>
+      			<argument>-d</argument>
+      			<argument>/home/migeo/Desktop/shared_folder/new_girl</argument>
       			<!-- <argument>-m</argument>-->
       			<!--<argument>-destination=tv_shows</argument>-->
       			<!--<argument>-d</argument>
-      			<argument>directory2</argument>-->
+      			<argument>directory2</argument>
       			<argument>-u</argument>
-      			<argument>LOG</argument>
-      			<argument>test/</argument>
+      			<argument>LOG</argument>-->
+      			<argument>/home/migeo/Desktop/shared_folder/newgirl</argument>
       		</arguments>
       	</configuration>
       </plugin>

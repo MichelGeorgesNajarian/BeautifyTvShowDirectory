@@ -3,6 +3,7 @@ package main.java;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -102,7 +103,14 @@ public class MultiThreading implements Runnable, ANSIColors {
 //		System.out.printf("Using directory: %s\n", rootdir.getName());
 		for (File file : rootdir.listFiles()) {
 			if (file.isFile()) {
-				fileHandler(file);
+				String fileType;
+				try {
+					fileType = Files.probeContentType(file.toPath());
+					if (fileType != null && fileType.startsWith("video")) fileHandler(file);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					System.out.printf(ANSI_RED + "An error happened when trying to find the type of file %s\nSkipping it\n" + ANSI_RESET, file.getName());
+				}
 			} else if (file.isDirectory()) {// if it's a directory, create a new thread which will go through it and beautify it
 				recursiveWalk(file);
 			}

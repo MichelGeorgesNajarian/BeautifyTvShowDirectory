@@ -44,7 +44,6 @@ public class TvShow implements ANSIColors {
 		}
 		this.opts = opts;
 		this.name = name;
-		this.inp = new Scanner(System.in);
 		getInfoApi();
 	}
 	
