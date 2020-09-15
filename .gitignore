@@ -7,4 +7,5 @@ test/
 test2/
 directory*/
 results/
+destination/
 *.log
