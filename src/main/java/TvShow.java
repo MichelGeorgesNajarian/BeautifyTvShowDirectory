@@ -101,7 +101,7 @@ public class TvShow implements ANSIColors {
 				this.tv_id = temp.getInt("id");
 			} else if (results.getInt("total_results") == 0) {
 				System.out.printf(ANSI_YELLOW + "No results were found for a TV show with the name of '%s'\n" + ANSI_RESET, this.name);
-				if (alternateMatch()) this.getInfoApi();
+				if (alternateMatch()) this.getInfoApi(); //in case can't find TV show due to unexpected numbers next to tv show name (i.e. the.flash.2014.s01e05.mkv), remove the numbers and try again
 				return;
 			} else {
 				multipleResults(results);
@@ -157,6 +157,7 @@ public class TvShow implements ANSIColors {
 		//setTvId(tv id value from response of get request);
 	}
 	
+	//in case can't find TV show due to unexpected numbers next to tv show name (i.e. the.flash.2014.s01e05.mkv), remove the numbers and try again
 	private boolean alternateMatch() {
 		String numbersInTVTitle = "[0-9]+";
 		Pattern nums = Pattern.compile(numbersInTVTitle);
