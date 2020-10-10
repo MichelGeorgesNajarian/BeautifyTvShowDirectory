@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.concurrent.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.management.InstanceNotFoundException;
 
@@ -99,6 +101,7 @@ public class TvShow implements ANSIColors {
 				this.tv_id = temp.getInt("id");
 			} else if (results.getInt("total_results") == 0) {
 				System.out.printf(ANSI_YELLOW + "No results were found for a TV show with the name of '%s'\n" + ANSI_RESET, this.name);
+				if (alternateMatch()) this.getInfoApi(); //in case can't find TV show due to unexpected numbers next to tv show name (i.e. the.flash.2014.s01e05.mkv), remove the numbers and try again
 				return;
 			} else {
 				multipleResults(results);
@@ -154,6 +157,19 @@ public class TvShow implements ANSIColors {
 		//setTvId(tv id value from response of get request);
 	}
 	
+	//in case can't find TV show due to unexpected numbers next to tv show name (i.e. the.flash.2014.s01e05.mkv), remove the numbers and try again
+	private boolean alternateMatch() {
+		String numbersInTVTitle = "[0-9]+";
+		Pattern nums = Pattern.compile(numbersInTVTitle);
+		Matcher m = nums.matcher(this.name);
+		if (m.find()) {
+			this.name = this.name.replaceAll("[0-9]+", "");
+			System.out.printf(ANSI_YELLOW + "Trying to find TV show with the name %s instead\n" + ANSI_RESET, this.name);
+			return true;
+		}
+		return false;
+	}
+
 	public void multipleResults(JSONObject results) {
 		JSONObject temp = (JSONObject) results.getJSONArray("results").get(0);
     	System.out.printf(ANSI_YELLOW + "\n\nThere are multiple possibilities when matching a TV show with the name '%s'\nIs it '%s' which started airing on %s?\n"
