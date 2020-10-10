@@ -10,6 +10,9 @@ import java.util.Scanner;
 
 import javax.management.InstanceNotFoundException;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 
 public class BeautifyTvShow implements ANSIColors {
 		
@@ -26,15 +29,22 @@ public class BeautifyTvShow implements ANSIColors {
 //			opt.printHelpPage();
 //			return;
 //		}
-		if (opt.matchOpt('u').isValue() && opt.getNumOptTrue() == 1) {
-			undoBeautification(opt.matchOpt('u'));
+		if (opt.matchOpt('u').isValue() && (opt.getNumOptTrue() == 1 || opt.matchOpt('v').isValue() && opt.getNumOptTrue() == 2)) { //either undo only or undo and verbose
+			undoBeautification(opt.matchOpt('u'), opt.matchOpt('v'));
 			return;
 		}
-		if (opt.getAllOpt().get(5).isValue()) {
-			File resDir = new File(opt.getAllOpt().get(5).getOpts()[0]); //getting the result directory if selected
+		if (opt.matchOpt('d').isValue()) {
+			File resDir = new File(opt.matchOpt('d').getOpts()[0]); //getting the result directory if selected
 			if (!resDir.exists()) {
 				if (!resDir.mkdir()) {
 					System.out.printf(ANSI_RED + "An error occured while creating the directory %s.\nExiting...\n" + ANSI_RESET, opt.getAllOpt().get(5).getOpts()[0]);
+				}
+				if (opt.matchOpt('v').isValue()) {
+					System.out.printf("Created directory %s\n", resDir.getPath());
+				}
+			} else {
+				if (opt.matchOpt('v').isValue()) {
+					System.out.printf("Using existing directory %s\n", resDir.getPath());
 				}
 			}
 		}
@@ -56,7 +66,10 @@ public class BeautifyTvShow implements ANSIColors {
 				e.printStackTrace();
 			}
 		}
-		System.out.printf(ANSI_GREEN + "All threads joined succesfully!\n" + ANSI_RESET);
+		if (opt.matchOpt('v').isValue()) {
+			System.out.printf(ANSI_GREEN + "All threads joined succesfully!\n" + ANSI_RESET);
+		}
+		
 		Properties props = new Properties();
 		Properties sensitive = new Properties();
 		try {
@@ -69,25 +82,40 @@ public class BeautifyTvShow implements ANSIColors {
 		//System.out.printf("api url: %s\napi key: %s\n", props.getProperty("api.searchtv.url"), sensitive.getProperty("api.key"));
 	}
 	
-	public static void undoBeautification(Opts opt) {
+	@SuppressWarnings("unchecked")
+	public static void undoBeautification(Opts opt, Opts v) { //function that undoes any changes that were done, by providing LOG file
 		for (String logfiles : opt.getOpts()) {
 			File log = new File(logfiles);
-			if (!log.exists()) {
+			if (!log.exists()) { //wrong log file passed
 				System.out.printf(ANSI_RED + "Logfile %s does not exist.\nSkipping it...\n" + ANSI_RESET, log.getName());
 			} else {
 				Scanner reader = null;
 				try {
 					reader = new Scanner(log);
+					StringBuilder logs = new StringBuilder();
 					while (reader.hasNextLine()) {
-						String temp = reader.nextLine();
-						String[] paths = temp.split("\\|");
-						File oldFile = new File(paths[0]);
-						File newFile = new File(paths[1]);
-						newFile.renameTo(oldFile);
+						logs.append(reader.nextLine()); //read entire logfile
 					}
-				} catch (FileNotFoundException e) {
+					JSONObject jsonLOG = new JSONObject(logs.toString()); //parse as JSON
+					List<JSONObject> beautified = new ArrayList<>();
+					JSONArray jarr = (JSONArray) jsonLOG.get("beautified");
+					for (int i = 0; i < jarr.length(); i++) {
+						beautified.add((JSONObject)jarr.get(i));
+					}
+					for (JSONObject j : beautified) {
+						File old = new File(j.getString("old"));
+						File nw = new File(j.getString("new"));
+						nw.renameTo(old);
+						if (v.isValue()) {
+							System.out.printf("Undid beautification for %s to %s\n", nw.getName(), old.getName());
+						}
+					}
+					if (v.isValue()) {
+						System.out.printf("Undo done\n");
+					}
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					System.out.printf(ANSI_RED + "An error occured when reading logfile %s\nVerify integrity of file and try again\n" + ANSI_RESET, log.getName());
+					System.out.printf(ANSI_RED + "An error occured when reading logfile %s\nVerify integrity of file and try again\n" + ANSI_RESET, log.getAbsolutePath());
 				}
 			}
 		}
