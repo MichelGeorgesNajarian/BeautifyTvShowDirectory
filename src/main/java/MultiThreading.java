@@ -149,9 +149,11 @@ public class MultiThreading implements Runnable, ANSIColors {
 		// TODO Auto-generated method stub
 //		System.out.print(this.allTvShows);
 		File resultDir = null; //resulting directory
-		boolean log = false; 
+		boolean log = false;
+		boolean append = false;
 		try {
 			log = opts.matchOpt('l').isValue(); //returns true if -l was one of the options
+			append = opts.matchOpt('a').isValue();
 			if (opts.matchOpt('d').isValue()) { //is true if destination directory was specified
 					resultDir = new File(opts.matchOpt('d').getOpts()[0]); //open resultant directory
 			} else {
@@ -203,7 +205,7 @@ public class MultiThreading implements Runnable, ANSIColors {
   				 *	}
 				 * */
 			}
-			
+			String appendOld = "_old";
 			for (TvShow show : this.allTvShows) {
 				if (show.getAllSeasons().size() > 0) { //if successfully matched with seasons
 					File currTV = new File(resultDir.getAbsolutePath() + "/" + show.getName()); //create directory name Season X (x is season num)
@@ -221,7 +223,12 @@ public class MultiThreading implements Runnable, ANSIColors {
 									entry.put("new", newEpisode.getAbsolutePath());
 									logJSON.append("beautified", entry);
 								}
-								oldEpisode.renameTo(newEpisode); //rename old episode to new one
+								if (append) {
+									//oldEpisode.copy(oldEpisode, newEpisode);
+									//oldEpisode.renameTo(new File("old_" + oldEpisode.getAbsolutePath()));
+								} else {
+									oldEpisode.renameTo(newEpisode); //rename old episode to new one
+								}
 								try {
 									if (this.opts.matchOpt('v').isValue()) {
 										if (newEpisode.exists()) System.out.printf(ANSI_GREEN + "%s created successfully\n" + ANSI_RESET, e.getFormattedName());

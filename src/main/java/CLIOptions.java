@@ -160,7 +160,7 @@ public class CLIOptions {
 	public void printHelpPage() {
 		System.out.printf("Usage: BeautifyTvShow [--Options -o --option=true --option=false --opt=param1,param2,param3] directory1/ directory2/ directory3/\n"
 				+ "Options are:\n"
-				+ "\t--append / -a: append \"_old\" at the end of the old file name\n"
+				+ "\t--append / -a: append filename to \"old_\"\n"
 				+ "\t--destination / -d: directory where the beautified files are to be put. EG --destination=TV OR -d TV\n"
 				+ "\t\t if no destination directory is given, then the results will be in the default directory named 'beautified'\n"
 				+ "\t--first / -f: always match with the first result from the API\n"
